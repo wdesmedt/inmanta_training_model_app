@@ -1,0 +1,6 @@
+site = "{{site}}"
+tier = "{{tier}}"
+name = "{{name}}"
+port={{port}}
+# {{ host.ip }}
+connect_to=[{% for app in connects_to -%}"http://{{ app.host.ip  }}:{{ app.port }}", {% endfor %}]

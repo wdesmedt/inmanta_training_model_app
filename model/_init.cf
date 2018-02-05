@@ -1,0 +1,47 @@
+"""
+    This module managed the Inmanta Training APP
+
+    :author Inmanta NV (code@inmanta.com)
+    :license Inmanta EULA
+"""
+import ip
+import ip::services
+import yum
+import exec
+import redhat::epel
+
+repo_url = "https://pkg.inmanta.com/training/el7/"
+key_url = "https://pkg.inmanta.com/training/training-public-key"
+
+entity App extends ip::services::Server:
+    """
+        This entity represents a single "instance" in the app application
+
+        :attr site: The site where this instance is deployed
+        :attr tier: The tier where this instance is deployed
+        :attr name: The name of the instance
+        :attr port: The network port this instance listens to
+    """
+    string site
+    string tier
+    string name
+    ip::port port=1234
+end
+
+App.connects_to [0:] -- App.accepts_from [0:]
+
+implementation appConfig for App:
+    yum::Repository(host=self.host, name="inmanta-app", baseurl=repo_url, gpgkey=key_url)
+
+    pkg = std::Package(host=self.host, name="app", state="installed")
+    pkg.requires = self.requires
+
+    cfg = std::ConfigFile(host=self.host, path="/etc/app.toml", content=std::template("app/config.j2"), reload=true)
+    systemd_cfg = std::ConfigFile(host=self.host, path="/etc/systemd/system/app.service", content=std::source("app/systemd.service"),
+                                  requires=pkg)
+    reload = exec::Run(host=self.host, command="/bin/systemctl daemon-reload", reload_only=true, requires=systemd_cfg)
+    svc = std::Service(host=self.host, name="app", state="running", onboot=true, requires=[pkg, reload, cfg, systemd_cfg])
+    svc.provides = self.provides
+end
+
+implement App using appConfig
