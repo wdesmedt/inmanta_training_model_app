@@ -1,0 +1,13 @@
+[Unit]
+Description=APP
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/app -vvv -c /etc/app.toml
+Restart=on-failure
+User=nobody
+Group=nobody
+
+[Install]
+WantedBy=multi-user.target
