@@ -1,0 +1,5 @@
+import app
+import appinfra
+
+app = appinfra::AppService()
+site1 = appinfra::Site(name="demo", app_service=app)

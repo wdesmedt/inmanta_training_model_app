@@ -1,0 +1,14 @@
+
+[config]
+heartbeat-interval = 60
+fact-expire = 1800
+environment=ee82d3c2-e454-4bbf-9138-d659205c781a
+
+
+[compiler_rest_transport]
+host = server.user1.inmanta.eu
+port = 8888
+
+[cmdline_rest_transport]
+host=server.user1.inmanta.eu
+port=8888

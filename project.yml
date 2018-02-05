@@ -1,0 +1,6 @@
+name: app
+modulepath: libs
+downloadpath: libs
+repo:
+  - https://github.com/inmanta/
+description: project to deploy app
